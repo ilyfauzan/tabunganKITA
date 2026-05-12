@@ -48,7 +48,36 @@ async function handleIncomingMessage(request: Request, method: string) {
       reply = `🚨 *TOTAL DENDA BELUM BAYAR*\n\nTotal denda yang harus dikumpulkan adalah:\n*Rp ${totalDenda.toLocaleString('id-ID')}*\n\nJangan lupa segera dibayar ya! 👮‍♂️`;
     }
     else if (msg === '!halo' || msg === '!hi') {
-      reply = `Halo *${name || 'Sobat Tabungan'}*! 👋\n\nSaya adalah bot Tabungan Kita. Gunakan perintah ini:\n\n- *!total* : Cek saldo tabungan\n- *!denda* : Cek total denda\n- *!halo* : Sapa bot`;
+      reply = `Halo *${name || 'Sobat Tabungan'}*! 👋\n\nSaya adalah bot Tabungan Kita. Gunakan perintah ini:\n\n- *!total* : Cek saldo tabungan\n- *!denda* : Cek total denda\n- *!status* : Cek siapa yang sudah nabung minggu ini\n- *!halo* : Sapa bot`;
+    }
+    else if (msg === '!status' || msg === '!cek') {
+      const now = new Date();
+      // Monday
+      const start = new Date(now);
+      const day = start.getDay();
+      const diff = start.getDate() - day + (day === 0 ? -6 : 1);
+      start.setDate(diff);
+      start.setHours(0, 0, 0, 0);
+
+      const { data: users } = await supabase.from('users').select('id, name');
+      const { data: logs } = await supabase.from('savings_logs')
+        .select('user_id, amount')
+        .gte('created_at', start.toISOString());
+
+      const savingsMap: Record<string, number> = {};
+      logs?.forEach(l => {
+        savingsMap[l.user_id] = (savingsMap[l.user_id] || 0) + Number(l.amount);
+      });
+
+      const target = 70000;
+      let statusList = '';
+      users?.forEach(u => {
+        const total = savingsMap[u.id] || 0;
+        const icon = total >= target ? '✅' : '❌';
+        statusList += `${icon} *${u.name}*: Rp ${total.toLocaleString('id-ID')}\n`;
+      });
+
+      reply = `📊 *STATUS TABUNGAN MINGGU INI*\n(Target: Rp ${target.toLocaleString('id-ID')})\n\n${statusList}\nSemangat nabung bareng-bareng! 💪🚀`;
     }
 
     if (reply && sender) {
