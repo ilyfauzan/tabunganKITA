@@ -220,7 +220,8 @@ export default function Dashboard() {
     }, ...prev]);
 
     // Send WA Notification
-    sendWANotification(`💰 *TABUNGAN BARU!*\n\n*${userName}* baru saja menabung sebesar *Rp ${amount.toLocaleString('id-ID')}*.\n\nSemangat terus menabungnya! 🚀`);
+    const newTotal = goal.currentAmount + amount;
+    sendWANotification(`💰 *TABUNGAN BARU!*\n\n*${userName}* baru saja menabung sebesar *Rp ${amount.toLocaleString('id-ID')}*.\n\n📈 *Total Tabungan:* Rp ${newTotal.toLocaleString('id-ID')}\n\nSemangat terus menabungnya! 🚀`);
 
     // Backend Update in Parallel for speed
     await Promise.all([
