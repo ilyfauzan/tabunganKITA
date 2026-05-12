@@ -184,6 +184,25 @@ export default function Dashboard() {
     calculateWeeklyStatus();
   }, [weekOffset, partners]);
 
+  const sendWANotification = async (message: string) => {
+    try {
+      const formData = new FormData();
+      formData.append('target', process.env.NEXT_PUBLIC_WA_GROUP_NAME || 'TabunganKita');
+      formData.append('message', message);
+      formData.append('countryCode', '62');
+
+      await fetch('https://api.fonnte.com/send', {
+        method: 'POST',
+        headers: {
+          'Authorization': process.env.NEXT_PUBLIC_FONNTE_TOKEN || '',
+        },
+        body: formData
+      });
+    } catch (err) {
+      console.error("Failed to send WA notification:", err);
+    }
+  };
+
   const handleSavingsSubmit = async (amount: number, category: string, userName: string) => {
     const targetUser = partners.find(p => p.name.toLowerCase() === userName.toLowerCase());
     const targetUserId = targetUser ? targetUser.id : user?.id;
@@ -210,6 +229,9 @@ export default function Dashboard() {
       supabase.from('goals').update({ current_amount: goal.currentAmount + amount }).eq('target_name', goal.targetName),
       targetUser ? supabase.from('users').update({ balance: Number(targetUser.balance) + amount }).eq('id', targetUserId) : Promise.resolve()
     ]);
+
+    // Send WA Notification
+    sendWANotification(`💰 *TABUNGAN BARU!*\n\n*${userName}* baru saja menabung sebesar *Rp ${amount.toLocaleString('id-ID')}*.\nKategori: ${category}\n\nSemangat terus menabungnya! 🚀`);
 
     // Final fetch to ensure data integrity
     fetchData();
@@ -319,6 +341,10 @@ export default function Dashboard() {
       }),
       targetUser ? supabase.from('users').update({ total_penalty: Number(targetUser.total_penalty) + 10000 }).eq('id', targetUserId) : Promise.resolve()
     ]);
+
+    // Send WA Notification
+    sendWANotification(`⚠️ *PENALTY / DENDA!*\n\n*${userName}* kena denda sebesar *Rp 10.000*.\nAlasan: ${penaltyType}\n\nJangan diulangi lagi ya! 👮‍♂️`);
+
     fetchData();
   };
 
