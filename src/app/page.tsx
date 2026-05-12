@@ -221,7 +221,8 @@ export default function Dashboard() {
 
     // Send WA Notification
     const newTotal = goal.currentAmount + amount;
-    sendWANotification(`💰 *TABUNGAN BARU!*\n\n*${userName}* baru saja menabung sebesar *Rp ${amount.toLocaleString('id-ID')}*.\n\n📈 *Total Tabungan:* Rp ${newTotal.toLocaleString('id-ID')}\n\nSemangat terus menabungnya! 🚀`);
+    const dateStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+    sendWANotification(`💰 *TABUNGAN BARU!*\n\n📅 *Tanggal:* ${dateStr}\n*${userName}* baru saja menabung sebesar *Rp ${amount.toLocaleString('id-ID')}*.\n\n📈 *Total Tabungan:* Rp ${newTotal.toLocaleString('id-ID')}\n\nSemangat terus menabungnya! 🚀`);
 
     // Backend Update in Parallel for speed
     await Promise.all([
@@ -336,7 +337,8 @@ export default function Dashboard() {
 
     // Send WA Notification
     const newPool = penaltyPool + 10000;
-    sendWANotification(`⚠️ *DENDA BARU!*\n\n*${userName}* kena denda sebesar *Rp 10.000*.\n\n🚨 *Total Kumpulan Denda:* Rp ${newPool.toLocaleString('id-ID')}\n\nJangan diulangi lagi ya! 👮‍♂️`);
+    const dateStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+    sendWANotification(`⚠️ *DENDA BARU!*\n\n📅 *Tanggal:* ${dateStr}\n*${userName}* kena denda sebesar *Rp 10.000*.\n\n🚨 *Total Kumpulan Denda:* Rp ${newPool.toLocaleString('id-ID')}\n\nJangan diulangi lagi ya! 👮‍♂️`);
 
     await Promise.all([
       supabase.from('penalty_logs').insert({
