@@ -23,11 +23,15 @@ export async function POST(request: Request) {
     }
 
     const { message, sender, name } = body;
+    console.log("Full Webhook Body:", body);
     console.log("Incoming WA Message:", { message, sender, name });
 
-    if (!message) return NextResponse.json({ status: true });
+    if (!message) {
+      console.log("No message found in body");
+      return NextResponse.json({ status: true });
+    }
 
-    const msg = message.toLowerCase().trim();
+    const msg = String(message).toLowerCase().trim();
     let reply = '';
 
     // Command Logic
