@@ -185,21 +185,38 @@ export default function Dashboard() {
   }, [weekOffset, partners]);
 
   const handleSavingsSubmit = async (amount: number, category: string, userName: string) => {
-    if (!user) return;
     const targetUser = partners.find(p => p.name === userName);
-    const targetUserId = targetUser ? targetUser.id : user.id;
+    const targetUserId = targetUser ? targetUser.id : user?.id;
 
+    // Optimistic Update (Update UI instantly)
+    setGoal(prev => ({ ...prev, currentAmount: prev.currentAmount + amount }));
+    setTransactions(prev => [{
+      id: 'temp-' + Date.now(),
+      type: 'savings',
+      user_name: userName,
+      amount: amount,
+      description: category,
+      date: new Date().toISOString()
+    }, ...prev]);
+
+    // Backend Update
     await supabase.from('savings_logs').insert({
       user_id: targetUserId,
-      amount,
-      category
+      amount: amount,
+      category: category,
+      created_at: new Date().toISOString()
     });
 
-    // Auto update user balance & goal (Should ideally be a DB trigger, doing it client side for now as fallback)
+    // Update user balance in background
     if (targetUser) {
       await supabase.from('users').update({ balance: Number(targetUser.balance) + amount }).eq('id', targetUserId);
     }
+
+    // Sync with DB goal
     await supabase.from('goals').update({ current_amount: goal.currentAmount + amount }).eq('target_name', goal.targetName);
+
+    // Final fetch to ensure data integrity
+    fetchData();
   };
 
   const handleDownloadPDF = async () => {
@@ -283,9 +300,19 @@ export default function Dashboard() {
   };
 
   const handlePenaltySubmit = async (userName: string, penaltyType: string) => {
-    if (!user) return;
     const targetUser = partners.find(p => p.name === userName);
-    const targetUserId = targetUser ? targetUser.id : user.id; // Fallback to current user if not found
+    const targetUserId = targetUser ? targetUser.id : user?.id;
+
+    // Optimistic Update
+    setPenaltyPool(prev => prev + 10000);
+    setTransactions(prev => [{
+      id: 'temp-p-' + Date.now(),
+      type: 'penalty',
+      user_name: userName,
+      amount: 10000,
+      description: penaltyType,
+      date: new Date().toISOString()
+    }, ...prev]);
 
     await supabase.from('penalty_logs').insert({
       user_id: targetUserId,
@@ -298,6 +325,8 @@ export default function Dashboard() {
     if (targetUser) {
       await supabase.from('users').update({ total_penalty: Number(targetUser.total_penalty) + 10000 }).eq('id', targetUserId);
     }
+    
+    fetchData();
   };
 
   const handleDeleteTransaction = async (trx: Transaction) => {
@@ -306,6 +335,14 @@ export default function Dashboard() {
     try {
       const targetUser = partners.find(p => p.name === trx.user_name);
       
+      // Optimistic Update
+      setTransactions(prev => prev.filter(t => t.id !== trx.id));
+      if (trx.type === 'savings') {
+        setGoal(prev => ({ ...prev, currentAmount: prev.currentAmount - trx.amount }));
+      } else {
+        setPenaltyPool(prev => prev - trx.amount);
+      }
+
       if (trx.type === 'savings') {
         // Delete log
         const { error: delError } = await supabase.from('savings_logs').delete().eq('id', trx.id);
