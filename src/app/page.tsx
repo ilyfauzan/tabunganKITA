@@ -219,6 +219,9 @@ export default function Dashboard() {
       date: new Date().toISOString()
     }, ...prev]);
 
+    // Send WA Notification
+    sendWANotification(`💰 *TABUNGAN BARU!*\n\n*${userName}* baru saja menabung sebesar *Rp ${amount.toLocaleString('id-ID')}*.\nKategori: ${category}\n\nSemangat terus menabungnya! 🚀`);
+
     // Backend Update in Parallel for speed
     await Promise.all([
       supabase.from('savings_logs').insert({
@@ -230,9 +233,6 @@ export default function Dashboard() {
       supabase.from('goals').update({ current_amount: goal.currentAmount + amount }).eq('target_name', goal.targetName),
       targetUser ? supabase.from('users').update({ balance: Number(targetUser.balance) + amount }).eq('id', targetUserId) : Promise.resolve()
     ]);
-
-    // Send WA Notification
-    sendWANotification(`💰 *TABUNGAN BARU!*\n\n*${userName}* baru saja menabung sebesar *Rp ${amount.toLocaleString('id-ID')}*.\nKategori: ${category}\n\nSemangat terus menabungnya! 🚀`);
 
     // Final fetch to ensure data integrity
     fetchData();
@@ -333,6 +333,9 @@ export default function Dashboard() {
       date: new Date().toISOString()
     }, ...prev]);
 
+    // Send WA Notification
+    sendWANotification(`⚠️ *PENALTY / DENDA!*\n\n*${userName}* kena denda sebesar *Rp 10.000*.\nAlasan: ${penaltyType}\n\nJangan diulangi lagi ya! 👮‍♂️`);
+
     await Promise.all([
       supabase.from('penalty_logs').insert({
         user_id: targetUserId,
@@ -342,9 +345,6 @@ export default function Dashboard() {
       }),
       targetUser ? supabase.from('users').update({ total_penalty: Number(targetUser.total_penalty) + 10000 }).eq('id', targetUserId) : Promise.resolve()
     ]);
-
-    // Send WA Notification
-    sendWANotification(`⚠️ *PENALTY / DENDA!*\n\n*${userName}* kena denda sebesar *Rp 10.000*.\nAlasan: ${penaltyType}\n\nJangan diulangi lagi ya! 👮‍♂️`);
 
     fetchData();
   };
