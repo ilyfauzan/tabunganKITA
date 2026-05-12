@@ -199,21 +199,22 @@ export default function Dashboard() {
       date: new Date().toISOString()
     }, ...prev]);
 
-    // Backend Update
-    await supabase.from('savings_logs').insert({
-      user_id: targetUserId,
-      amount: amount,
-      category: category,
-      created_at: new Date().toISOString()
-    });
+    // Backend Update in Parallel for speed
+    const dbPromises = [
+      supabase.from('savings_logs').insert({
+        user_id: targetUserId,
+        amount: amount,
+        category: category,
+        created_at: new Date().toISOString()
+      }),
+      supabase.from('goals').update({ current_amount: goal.currentAmount + amount }).eq('target_name', goal.targetName)
+    ];
 
-    // Update user balance in background
     if (targetUser) {
-      await supabase.from('users').update({ balance: Number(targetUser.balance) + amount }).eq('id', targetUserId);
+      dbPromises.push(supabase.from('users').update({ balance: Number(targetUser.balance) + amount }).eq('id', targetUserId));
     }
 
-    // Sync with DB goal
-    await supabase.from('goals').update({ current_amount: goal.currentAmount + amount }).eq('target_name', goal.targetName);
+    await Promise.all(dbPromises);
 
     // Final fetch to ensure data integrity
     fetchData();
@@ -314,18 +315,20 @@ export default function Dashboard() {
       date: new Date().toISOString()
     }, ...prev]);
 
-    await supabase.from('penalty_logs').insert({
-      user_id: targetUserId,
-      penalty_type: penaltyType,
-      amount: 10000,
-      status: 'Belum Bayar'
-    });
+    const dbPromises = [
+      supabase.from('penalty_logs').insert({
+        user_id: targetUserId,
+        penalty_type: penaltyType,
+        amount: 10000,
+        status: 'Belum Bayar'
+      })
+    ];
 
-    // Auto update user total_penalty
     if (targetUser) {
-      await supabase.from('users').update({ total_penalty: Number(targetUser.total_penalty) + 10000 }).eq('id', targetUserId);
+      dbPromises.push(supabase.from('users').update({ total_penalty: Number(targetUser.total_penalty) + 10000 }).eq('id', targetUserId));
     }
     
+    await Promise.all(dbPromises);
     fetchData();
   };
 
