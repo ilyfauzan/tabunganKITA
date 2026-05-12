@@ -59,10 +59,12 @@ async function handleIncomingMessage(request: Request, method: string) {
       start.setDate(diff);
       start.setHours(0, 0, 0, 0);
 
-      const { data: users } = await supabase.from('users').select('id, name');
-      const { data: logs } = await supabase.from('savings_logs')
+      const { data: users, error: uError } = await supabase.from('users').select('id, name');
+      const { data: logs, error: lError } = await supabase.from('savings_logs')
         .select('user_id, amount')
         .gte('created_at', start.toISOString());
+
+      console.log("Status Query Results:", { users, logs, uError, lError });
 
       const savingsMap: Record<string, number> = {};
       logs?.forEach(l => {
