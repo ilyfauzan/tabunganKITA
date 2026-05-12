@@ -200,21 +200,16 @@ export default function Dashboard() {
     }, ...prev]);
 
     // Backend Update in Parallel for speed
-    const dbPromises: Promise<any>[] = [
+    await Promise.all([
       supabase.from('savings_logs').insert({
         user_id: targetUserId,
         amount: amount,
         category: category,
         created_at: new Date().toISOString()
       }),
-      supabase.from('goals').update({ current_amount: goal.currentAmount + amount }).eq('target_name', goal.targetName)
-    ];
-
-    if (targetUser) {
-      dbPromises.push(supabase.from('users').update({ balance: Number(targetUser.balance) + amount }).eq('id', targetUserId));
-    }
-
-    await Promise.all(dbPromises);
+      supabase.from('goals').update({ current_amount: goal.currentAmount + amount }).eq('target_name', goal.targetName),
+      targetUser ? supabase.from('users').update({ balance: Number(targetUser.balance) + amount }).eq('id', targetUserId) : Promise.resolve()
+    ]);
 
     // Final fetch to ensure data integrity
     fetchData();
@@ -315,20 +310,15 @@ export default function Dashboard() {
       date: new Date().toISOString()
     }, ...prev]);
 
-    const dbPromises: Promise<any>[] = [
+    await Promise.all([
       supabase.from('penalty_logs').insert({
         user_id: targetUserId,
         penalty_type: penaltyType,
         amount: 10000,
         status: 'Belum Bayar'
-      })
-    ];
-
-    if (targetUser) {
-      dbPromises.push(supabase.from('users').update({ total_penalty: Number(targetUser.total_penalty) + 10000 }).eq('id', targetUserId));
-    }
-    
-    await Promise.all(dbPromises);
+      }),
+      targetUser ? supabase.from('users').update({ total_penalty: Number(targetUser.total_penalty) + 10000 }).eq('id', targetUserId) : Promise.resolve()
+    ]);
     fetchData();
   };
 
