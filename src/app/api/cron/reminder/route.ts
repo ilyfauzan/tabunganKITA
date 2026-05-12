@@ -4,7 +4,9 @@ export async function GET(request: Request) {
   // Security check: Only allow Vercel Cron to trigger this
   // In production, you should also check for CRON_SECRET header if configured
   const authHeader = request.headers.get('authorization');
-  if (process.env.NODE_ENV === 'production' && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  const cronSecret = process.env.CRON_SECRET;
+  
+  if (process.env.NODE_ENV === 'production' && cronSecret && authHeader !== `Bearer ${cronSecret}`) {
     return new Response('Unauthorized', { status: 401 });
   }
 
