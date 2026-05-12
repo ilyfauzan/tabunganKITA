@@ -15,11 +15,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Tabungan Kita",
-  description: "Aplikasi tabungan bersama untuk pasangan",
+  description: "Aplikasi tabungan Fauzan dan Alvina",
   openGraph: {
     images: [
       {
-        url: "/og-image.png",
+        url: "/icon.png",
         width: 1200,
         height: 630,
         alt: "Tabungan Kita",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    images: ["/og-image.png"],
+    images: ["/icon.png"],
   },
   icons: {
     icon: "/icon.png",
@@ -48,7 +48,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
-        <link rel="icon" href="/og-image.png" />
+        <link rel="icon" href="/icon.png" />
       </head>
       <body className="min-h-full flex flex-col">
         <AuthProvider>
