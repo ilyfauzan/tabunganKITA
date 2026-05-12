@@ -81,7 +81,7 @@ async function handleIncomingMessage(request: Request, method: string) {
         savingsMap[l.user_id] = (savingsMap[l.user_id] || 0) + Number(l.amount);
       });
 
-      const target = 70000;
+      const target = 140000;
       let statusList = '';
       users?.forEach(u => {
         const total = savingsMap[u.id] || 0;
