@@ -220,7 +220,7 @@ export default function Dashboard() {
     }, ...prev]);
 
     // Send WA Notification
-    sendWANotification(`💰 *TABUNGAN BARU!*\n\n*${userName}* baru saja menabung sebesar *Rp ${amount.toLocaleString('id-ID')}*.\nKategori: ${category}\n\nSemangat terus menabungnya! 🚀`);
+    sendWANotification(`💰 *TABUNGAN BARU!*\n\n*${userName}* baru saja menabung sebesar *Rp ${amount.toLocaleString('id-ID')}*.\n\nSemangat terus menabungnya! 🚀`);
 
     // Backend Update in Parallel for speed
     await Promise.all([
@@ -334,7 +334,7 @@ export default function Dashboard() {
     }, ...prev]);
 
     // Send WA Notification
-    sendWANotification(`⚠️ *PENALTY / DENDA!*\n\n*${userName}* kena denda sebesar *Rp 10.000*.\nAlasan: ${penaltyType}\n\nJangan diulangi lagi ya! 👮‍♂️`);
+    sendWANotification(`⚠️ *PENALTY / DENDA!*\n\n*${userName}* kena denda sebesar *Rp 10.000*.\n\nJangan diulangi lagi ya! 👮‍♂️`);
 
     await Promise.all([
       supabase.from('penalty_logs').insert({
