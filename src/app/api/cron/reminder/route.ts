@@ -21,7 +21,7 @@ export async function GET(request: Request) {
       throw new Error("Missing Fonnte configuration");
     }
 
-    const message = `📢 *PENGINGAT MINGGUAN!*\n\nHalo semuanya! 👋\nHari ini hari Minggu jam 12 siang. Jangan lupa untuk mengisi tabungan mingguan ya agar target kita cepat tercapai! 💰🚀\n\nKlik link ini untuk mengisi: https://tabungan-kita.vercel.app`;
+    const message = `📢 *WOI NABUNG KOCAK!*\n\n 👋\nUdah hari Minggu Jangan lupa untuk nabung woi biar bisa 100juta! 💰🚀\n\nNabung disini ya: https://tabungan-kita.vercel.app`;
 
     const params = new URLSearchParams();
     params.append('target', target);
