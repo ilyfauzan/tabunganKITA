@@ -334,7 +334,7 @@ export default function Dashboard() {
     }, ...prev]);
 
     // Send WA Notification
-    sendWANotification(`⚠️ *PENALTY / DENDA!*\n\n*${userName}* kena denda sebesar *Rp 10.000*.\n\nJangan diulangi lagi ya! 👮‍♂️`);
+    sendWANotification(`⚠️ *DENDA BARU!*\n\n*${userName}* kena denda sebesar *Rp 10.000*.\n\nJangan diulangi lagi ya! 👮‍♂️`);
 
     await Promise.all([
       supabase.from('penalty_logs').insert({
