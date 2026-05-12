@@ -59,6 +59,16 @@ async function handleIncomingMessage(request: Request, method: string) {
       start.setDate(diff);
       start.setHours(0, 0, 0, 0);
 
+      // Sunday
+      const end = new Date(start);
+      end.setDate(start.getDate() + 6);
+      end.setHours(23, 59, 59, 999);
+
+      const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+      const startStr = start.toLocaleDateString('id-ID', options);
+      const endStr = end.toLocaleDateString('id-ID', options);
+      const rangeStr = `${startStr} - ${endStr}`;
+
       const { data: users, error: uError } = await supabase.from('users').select('id, name');
       const { data: logs, error: lError } = await supabase.from('savings_logs')
         .select('user_id, amount')
@@ -79,7 +89,7 @@ async function handleIncomingMessage(request: Request, method: string) {
         statusList += `${icon} *${u.name}*: Rp ${total.toLocaleString('id-ID')}\n`;
       });
 
-      reply = `📊 *STATUS TABUNGAN MINGGU INI*\n(Target: Rp ${target.toLocaleString('id-ID')})\n\n${statusList}\nSemangat nabung bareng-bareng! 💪🚀`;
+      reply = `📊 *STATUS TABUNGAN MINGGU INI*\n📅 *${rangeStr}*\n(Target: Rp ${target.toLocaleString('id-ID')})\n\n${statusList}\nSemangat nabung bareng-bareng! 💪🚀`;
     }
 
     if (reply && sender) {
