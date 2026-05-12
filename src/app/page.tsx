@@ -200,7 +200,7 @@ export default function Dashboard() {
     }, ...prev]);
 
     // Backend Update in Parallel for speed
-    const dbPromises = [
+    const dbPromises: Promise<any>[] = [
       supabase.from('savings_logs').insert({
         user_id: targetUserId,
         amount: amount,
@@ -315,7 +315,7 @@ export default function Dashboard() {
       date: new Date().toISOString()
     }, ...prev]);
 
-    const dbPromises = [
+    const dbPromises: Promise<any>[] = [
       supabase.from('penalty_logs').insert({
         user_id: targetUserId,
         penalty_type: penaltyType,
