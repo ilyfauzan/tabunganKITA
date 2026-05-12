@@ -26,7 +26,11 @@ async function handleIncomingMessage(request: Request, method: string) {
     console.log(`--- WEBHOOK ${method} RECEIVED ---`);
     console.log("Body/Query:", body);
 
-    const { message, sender, name } = body;
+    // Fonnte sends fields as 'pesan' and 'pengirim' (Indonesian)
+    const message = body.pesan || body.message;
+    const sender = body.pengirim || body.sender;
+    const name = body.nama || body.name;
+
     if (!message) return NextResponse.json({ status: true });
 
     const msg = String(message).toLowerCase().trim();
