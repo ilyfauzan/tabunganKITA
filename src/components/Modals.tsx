@@ -112,11 +112,30 @@ export function Modals({
                 <option value="Alvina">Alvina</option>
               </select>
             </div>
-
-            <div className="flex gap-3 pt-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Alasan</label>
+              <select 
+                className="w-full border-gray-200 rounded-lg p-2.5 bg-gray-50 border focus:ring-2 focus:ring-red-400/20 outline-none transition-all mb-2"
+                value={penaltyType}
+                onChange={(e) => setPenaltyType(e.target.value)}
+              >
+                <option value="Lupa Pergi">Lupa kabar saat pergi (Rp 10.000)</option>
+                <option value="Lupa Sampai">Lupa kabar saat sampai (Rp 10.000)</option>
+                <option value="Lainnya">Lainnya...</option>
+              </select>
+              {penaltyType === 'Lainnya' && (
+                <input 
+                  type="text"
+                  placeholder="Masukkan alasan spesifik"
+                  className="w-full border-gray-200 rounded-lg p-2.5 bg-gray-50 border focus:ring-2 focus:ring-red-400/20 outline-none transition-all"
+                  value={customPenalty}
+                  onChange={(e) => setCustomPenalty(e.target.value)}
+                />
+              )}
+            </div><div className="flex gap-3 pt-4">
               <Button variant="outline" className="w-full" onClick={onClosePenalty}>Batal</Button>
               <Button variant="destructive" className="w-full" onClick={() => {
-                onSubmitPenalty(penaltyUser, 'Melanggar Aturan')
+                onSubmitPenalty(penaltyUser, penaltyType === 'Lainnya' ? customPenalty : penaltyType)
                 onClosePenalty()
               }}>Catat Denda</Button>
             </div>
