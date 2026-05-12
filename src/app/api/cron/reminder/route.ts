@@ -12,7 +12,10 @@ export async function GET(request: Request) {
     const token = process.env.NEXT_PUBLIC_FONNTE_TOKEN;
     const target = process.env.NEXT_PUBLIC_WA_GROUP_NAME;
 
+    console.log("Triggering Cron for:", target);
+
     if (!token || !target) {
+      console.error("Missing Config:", { hasToken: !!token, hasTarget: !!target });
       throw new Error("Missing Fonnte configuration");
     }
 
@@ -28,10 +31,12 @@ export async function GET(request: Request) {
       headers: {
         'Authorization': token,
       },
-      body: params
+      body: params,
+      cache: 'no-store'
     });
 
     const result = await response.json();
+    console.log("Fonnte Response:", result);
     return NextResponse.json({ success: true, result });
 
   } catch (err: any) {
