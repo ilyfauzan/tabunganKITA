@@ -308,23 +308,28 @@ export default function Dashboard() {
       
       if (trx.type === 'savings') {
         // Delete log
-        await supabase.from('savings_logs').delete().eq('id', trx.id);
+        const { error: delError } = await supabase.from('savings_logs').delete().eq('id', trx.id);
+        if (delError) throw delError;
         
         // Deduct balance
         if (targetUser) {
-          await supabase.from('users').update({ balance: Number(targetUser.balance) - trx.amount }).eq('id', targetUser.id);
+          const { error: userError } = await supabase.from('users').update({ balance: Number(targetUser.balance) - trx.amount }).eq('id', targetUser.id);
+          if (userError) throw userError;
         }
         
         // Deduct goal
-        await supabase.from('goals').update({ current_amount: goal.currentAmount - trx.amount }).eq('target_name', goal.targetName);
+        const { error: goalError } = await supabase.from('goals').update({ current_amount: goal.currentAmount - trx.amount }).eq('target_name', goal.targetName);
+        if (goalError) throw goalError;
         
       } else if (trx.type === 'penalty') {
         // Delete log
-        await supabase.from('penalty_logs').delete().eq('id', trx.id);
+        const { error: delError } = await supabase.from('penalty_logs').delete().eq('id', trx.id);
+        if (delError) throw delError;
         
         // Deduct penalty
         if (targetUser) {
-          await supabase.from('users').update({ total_penalty: Number(targetUser.total_penalty) - trx.amount }).eq('id', targetUser.id);
+          const { error: userError } = await supabase.from('users').update({ total_penalty: Number(targetUser.total_penalty) - trx.amount }).eq('id', targetUser.id);
+          if (userError) throw userError;
         }
       }
 
