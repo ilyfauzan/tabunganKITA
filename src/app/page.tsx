@@ -188,18 +188,23 @@ export default function Dashboard() {
 
   const sendWANotification = async (message: string) => {
     try {
-      await fetch('https://api.fonnte.com/send', {
+      const response = await fetch('https://api.fonnte.com/send', {
         method: 'POST',
         headers: {
           'Authorization': process.env.NEXT_PUBLIC_FONNTE_TOKEN || '',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          target: process.env.NEXT_PUBLIC_WA_GROUP_NAME || 'TabunganKita',
+          target: process.env.NEXT_PUBLIC_WA_GROUP_NAME || '',
           message: message,
           countryCode: '62'
         })
       });
+      const result = await response.json();
+      if (!result.status) {
+        console.error("Fonnte Error:", result.reason);
+        // Silent fail for user, but we know it now
+      }
     } catch (err) {
       console.error("Failed to send WA notification:", err);
     }
