@@ -335,7 +335,8 @@ export default function Dashboard() {
     }, ...prev]);
 
     // Send WA Notification
-    sendWANotification(`⚠️ *DENDA BARU!*\n\n*${userName}* kena denda sebesar *Rp 10.000*.\n\nJangan diulangi lagi ya! 👮‍♂️`);
+    const newPool = penaltyPool + 10000;
+    sendWANotification(`⚠️ *DENDA BARU!*\n\n*${userName}* kena denda sebesar *Rp 10.000*.\n\n🚨 *Total Kumpulan Denda:* Rp ${newPool.toLocaleString('id-ID')}\n\nJangan diulangi lagi ya! 👮‍♂️`);
 
     await Promise.all([
       supabase.from('penalty_logs').insert({
