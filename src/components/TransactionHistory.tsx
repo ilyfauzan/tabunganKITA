@@ -39,7 +39,6 @@ export function TransactionHistory({ transactions, onDownloadPDF, onDelete }: Tr
             <tr>
               <th className="px-3 py-3">Tanggal</th>
               <th className="px-3 py-3">Nama</th>
-              <th className="px-3 py-3">Kategori</th>
               <th className="px-3 py-3 text-right">Nominal</th>
               {onDelete && <th className="px-2 py-3 w-10"></th>}
             </tr>
@@ -47,7 +46,7 @@ export function TransactionHistory({ transactions, onDownloadPDF, onDelete }: Tr
           <tbody>
             {transactions.length === 0 ? (
               <tr>
-                <td colSpan={onDelete ? 5 : 4} className="px-5 py-8 text-center text-gray-400 italic">
+                <td colSpan={onDelete ? 4 : 3} className="px-5 py-8 text-center text-gray-400 italic">
                   Belum ada riwayat transaksi
                 </td>
               </tr>
@@ -58,14 +57,7 @@ export function TransactionHistory({ transactions, onDownloadPDF, onDelete }: Tr
                     {new Date(trx.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
                   </td>
                   <td className="px-3 py-3 font-medium text-gray-700">{trx.user_name}</td>
-                  <td className="px-3 py-3">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${trx.type === 'savings'
-                        ? 'bg-blue-50 text-blue-600'
-                        : 'bg-red-50 text-red-600'
-                      }`}>
-                      {trx.description}
-                    </span>
-                  </td>
+
                   <td className={`px-3 py-3 text-right font-medium whitespace-nowrap ${trx.type === 'savings' ? 'text-green-600' : 'text-red-600'
                     }`}>
                     {trx.type === 'savings' ? '+' : ''}Rp {trx.amount.toLocaleString('id-ID')}
