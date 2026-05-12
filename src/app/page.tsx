@@ -56,10 +56,10 @@ export default function Dashboard() {
       const { data: usersData } = await supabase.from('users').select('*');
       if (usersData) {
         setPartners(usersData);
-        // calculateWeeklyStatus will be triggered by useEffect when partners change
-
-        // Fetch Penalty Pool
-        const totalPenalty = usersData.reduce((acc: number, curr: any) => acc + Number(curr.total_penalty), 0);
+        
+        // Fetch Penalty Pool directly from penalty_logs for accuracy
+        const { data: pLogs } = await supabase.from('penalty_logs').select('amount').eq('status', 'Belum Bayar');
+        const totalPenalty = pLogs?.reduce((acc: number, curr: any) => acc + Number(curr.amount), 0) || 0;
         setPenaltyPool(totalPenalty);
       }
 
@@ -185,7 +185,7 @@ export default function Dashboard() {
   }, [weekOffset, partners]);
 
   const handleSavingsSubmit = async (amount: number, category: string, userName: string) => {
-    const targetUser = partners.find(p => p.name === userName);
+    const targetUser = partners.find(p => p.name.toLowerCase() === userName.toLowerCase());
     const targetUserId = targetUser ? targetUser.id : user?.id;
 
     // Optimistic Update (Update UI instantly)
@@ -296,7 +296,7 @@ export default function Dashboard() {
   };
 
   const handlePenaltySubmit = async (userName: string, penaltyType: string) => {
-    const targetUser = partners.find(p => p.name === userName);
+    const targetUser = partners.find(p => p.name.toLowerCase() === userName.toLowerCase());
     const targetUserId = targetUser ? targetUser.id : user?.id;
 
     // Optimistic Update
@@ -326,7 +326,7 @@ export default function Dashboard() {
     if (!window.confirm(`Apakah Anda yakin ingin menghapus transaksi ini? (Akan mengurangi saldo/denda secara otomatis)`)) return;
 
     try {
-      const targetUser = partners.find(p => p.name === trx.user_name);
+      const targetUser = partners.find(p => p.name.toLowerCase() === trx.user_name.toLowerCase());
       
       // Optimistic Update
       setTransactions(prev => prev.filter(t => t.id !== trx.id));
