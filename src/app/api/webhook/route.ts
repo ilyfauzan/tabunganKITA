@@ -33,11 +33,13 @@ async function handleIncomingMessage(request: Request, method: string) {
     let reply = '';
 
     if (msg === '!total' || msg === '!saldo') {
-      const { data: goal } = await supabase.from('goals').select('current_amount').single();
+      const { data: goal, error } = await supabase.from('goals').select('current_amount').single();
+      console.log("Goal Query Result:", { goal, error });
       reply = `💰 *TOTAL TABUNGAN KITA*\n\nSaat ini total tabungan terkumpul adalah:\n*Rp ${(goal?.current_amount || 0).toLocaleString('id-ID')}*\n\nSemangat terus menabungnya! 🚀`;
     } 
     else if (msg === '!denda') {
-      const { data: penalties } = await supabase.from('penalty_logs').select('amount').eq('status', 'Belum Bayar');
+      const { data: penalties, error } = await supabase.from('penalty_logs').select('amount').eq('status', 'Belum Bayar');
+      console.log("Penalty Query Result:", { penalties, error });
       const totalDenda = penalties?.reduce((sum, p) => sum + (p.amount || 0), 0) || 0;
       reply = `🚨 *TOTAL DENDA BELUM BAYAR*\n\nTotal denda yang harus dikumpulkan adalah:\n*Rp ${totalDenda.toLocaleString('id-ID')}*\n\nJangan lupa segera dibayar ya! 👮‍♂️`;
     }
