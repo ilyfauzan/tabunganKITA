@@ -72,3 +72,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ status: false, error: err.message }, { status: 500 });
   }
 }
+
+export async function GET() {
+  return new Response("Webhook is active and listening!", { status: 200 });
+}
