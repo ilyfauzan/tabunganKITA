@@ -23,9 +23,11 @@ export async function POST(request: Request) {
       });
     }
 
+    console.log("--- WEBHOOK RECEIVED ---");
+    console.log("Headers:", Object.fromEntries(request.headers.entries()));
+    console.log("Body:", body);
+
     const { message, sender, name } = body;
-    console.log("Full Webhook Body:", body);
-    console.log("Incoming WA Message:", { message, sender, name });
 
     if (!message) {
       console.log("No message found in body");
