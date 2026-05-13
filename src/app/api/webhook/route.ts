@@ -45,7 +45,7 @@ async function handleIncomingMessage(request: Request, method: string) {
       const { data: penalties, error } = await supabase.from('penalty_logs').select('amount').eq('status', 'Belum Bayar');
       console.log("Penalty Query Result:", { penalties, error });
       const totalDenda = penalties?.reduce((sum, p) => sum + (p.amount || 0), 0) || 0;
-      reply = `🚨 *TOTAL DENDA BELUM BAYAR*\n\nTotal denda yang harus dikumpulkan adalah:\n*Rp ${totalDenda.toLocaleString('id-ID')}*\n\nJangan lupa segera dibayar ya! 👮‍♂️`;
+      reply = `🚨 *TOTAL DENDA*\n\nTotal denda yang udah dikumpulin adalah:\n*Rp ${totalDenda.toLocaleString('id-ID')}*\n\nYuk tambahin denda lagi! 👮‍♂️`;
     }
     else if (msg === '!halo' || msg === '!hi') {
       reply = `Halo *${name || 'Sobat Tabungan'}*! 👋\n\nSaya adalah bot Tabungan Kita. Gunakan perintah ini:\n\n- *!total* : Cek saldo tabungan\n- *!denda* : Cek total denda\n- *!status* : Cek siapa yang sudah nabung minggu ini\n- *!halo* : Sapa bot`;
