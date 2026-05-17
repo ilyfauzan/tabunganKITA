@@ -5,7 +5,7 @@ export async function GET(request: Request) {
   // In production, you should also check for CRON_SECRET header if configured
   const authHeader = request.headers.get('authorization');
   const cronSecret = process.env.CRON_SECRET;
-  
+
   if (process.env.NODE_ENV === 'production' && cronSecret && authHeader !== `Bearer ${cronSecret}`) {
     return new Response('Unauthorized', { status: 401 });
   }
@@ -21,7 +21,7 @@ export async function GET(request: Request) {
       throw new Error("Missing Fonnte configuration");
     }
 
-    const message = `📢 *WOI NABUNG KOCAK!*\n\nUdah hari Minggu Jangan lupa nabung woi biar bisa 100juta! 💰🚀\n\nkalo udah nabung, isi ini ya: https://tabungan-kita.vercel.app`;
+    const message = `📢 *WOI NABUNG KOCAK!*\n\nUdah hari Minggu Jangan lupa nabung woi biar bisa 100juta! 💰🚀\n\nkalo udah nabung, isi ini ya: https://tabungan-kita-xi.vercel.app`;
 
     const params = new URLSearchParams();
     params.append('target', target);

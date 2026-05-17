@@ -40,7 +40,7 @@ async function handleIncomingMessage(request: Request, method: string) {
       const { data: goal, error } = await supabase.from('goals').select('current_amount').single();
       console.log("Goal Query Result:", { goal, error });
       reply = `💰 *TOTAL TABUNGAN KITA*\n\nSaat ini total tabungan terkumpul adalah:\n*Rp ${(goal?.current_amount || 0).toLocaleString('id-ID')}*\n\nSemangat terus menabungnya! 🚀`;
-    } 
+    }
     else if (msg === '!denda') {
       const { data: penalties, error } = await supabase.from('penalty_logs').select('amount').eq('status', 'Belum Bayar');
       console.log("Penalty Query Result:", { penalties, error });
@@ -58,16 +58,6 @@ async function handleIncomingMessage(request: Request, method: string) {
       const diff = start.getDate() - day + (day === 0 ? -6 : 1);
       start.setDate(diff);
       start.setHours(0, 0, 0, 0);
-
-      // Sunday
-      const end = new Date(start);
-      end.setDate(start.getDate() + 6);
-      end.setHours(23, 59, 59, 999);
-
-      const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
-      const startStr = start.toLocaleDateString('id-ID', options);
-      const endStr = end.toLocaleDateString('id-ID', options);
-      const rangeStr = `${startStr} - ${endStr}`;
 
       const { data: users, error: uError } = await supabase.from('users').select('id, name');
       const { data: logs, error: lError } = await supabase.from('savings_logs')
@@ -89,7 +79,7 @@ async function handleIncomingMessage(request: Request, method: string) {
         statusList += `${icon} *${u.name}*: Rp ${total.toLocaleString('id-ID')}\n`;
       });
 
-      reply = `📊 *STATUS TABUNGAN MINGGU INI*\n📅 *${rangeStr}*\n(Target: Rp ${target.toLocaleString('id-ID')})\n\n${statusList}\nSemangat nabung bareng-bareng! 💪🚀`;
+      reply = `📊 *STATUS TABUNGAN MINGGU INI*\n(Target: Rp ${target.toLocaleString('id-ID')})\n\n${statusList}\nSemangat nabung bareng-bareng! 💪🚀`;
     }
 
     if (reply && sender) {
