@@ -413,7 +413,21 @@ export default function Dashboard() {
     fetchData();
   };
 
-  if (authLoading || (!user && !authLoading)) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  if (authLoading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+        <div className="animate-pulse">Mengarahkan ke halaman login...</div>
+        <button 
+          onClick={() => window.location.href = '/auth'} 
+          className="text-pink-500 underline text-sm"
+        >
+          Klik di sini jika tidak otomatis pindah
+        </button>
+      </div>
+    );
+  }
 
   const currentUser = partners.find(p => p.id === user?.id);
   const isAdmin = currentUser?.name === 'Fauzan' || user?.email?.toLowerCase().includes('fauzan') || user?.email?.toLowerCase() === 'fauzan@gmail.com';
